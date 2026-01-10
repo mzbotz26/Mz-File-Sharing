@@ -13,27 +13,23 @@ from shortzy import Shortzy
 from datetime import datetime
 from database.database import user_data, db_verify_status, db_update_verify_status
 
-async def is_subscribed(filter, client, update):
-    if not (FORCESUB_CHANNEL or FORCESUB_CHANNEL2 or FORCESUB_CHANNEL3):
-        return True
+async def is_subscribed(filter, client, message):
 
-    user_id = update.from_user.id
+    user_id = message.from_user.id
 
     if user_id in ADMINS:
         return True
 
-    member_status = ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.MEMBER
+    channels = [FORCESUB_CHANNEL, FORCESUB_CHANNEL2, FORCESUB_CHANNEL3]
 
-    for channel_id in [FORCESUB_CHANNEL, FORCESUB_CHANNEL2, FORCESUB_CHANNEL3]:
-        if not channel_id:
+    for channel in channels:
+        if not channel:
             continue
-
         try:
-            member = await client.get_chat_member(chat_id=channel_id, user_id=user_id)
-        except UserNotParticipant:
-            return False
-
-        if member.status not in member_status:
+            member = await client.get_chat_member(channel, user_id)
+            if member.status not in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
+                return False
+        except:
             return False
 
     return True
