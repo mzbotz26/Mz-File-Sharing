@@ -13,9 +13,14 @@ def clean(name):
     return name.replace(".", " ").replace("_", " ")
 
 def get_quality(name):
-    for q in ["HDRip","WEB-DL","WebDL","CAM","HDTC","PreHD","DVDRip","Bluray"]:
-        if q.lower() in name.lower():
-            return q
+    name = name.lower()
+
+    if "webrip" in name: return "WEBRip"
+    if "web-dl" in name or "webdl" in name: return "WEB-DL"
+    if "hdrip" in name: return "HDRip"
+    if "cam" in name: return "CAM"
+    if "hdtc" in name: return "HDTC"
+    if "prehd" in name: return "PreHD"
     return "HDRip"
 
 def get_resolution(name):
