@@ -39,19 +39,18 @@ async def start_command(client: Bot, message):
 
     if len(message.text.split()) > 1 and verify_status["is_verified"]:
 
-        try:
-            base64_string = message.text.split(" ", 1)[1]
-            decoded = await decode(base64_string)
+    try:
+        base64_string = message.text.split(" ", 1)[1]
+        decoded = await decode(base64_string)
 
-            db_id, msg_id = decoded.split(":")
-            db_id = int(db_id)
-            msg_id = int(msg_id)
-
-            if db_id != client.db_channel.id:
-                return await message.reply("❌ Invalid source.")
-
-        except:
+        if not decoded.startswith("get-"):
             return await message.reply("❌ Invalid or expired link.")
+
+        msg_id = int(int(decoded.split("-")[1]) / abs(client.db_channel.id))
+        ids = [msg_id]
+
+    except:
+        return await message.reply("❌ Invalid or expired link.")
 
         temp = await message.reply("⏳ Please wait...")
 
