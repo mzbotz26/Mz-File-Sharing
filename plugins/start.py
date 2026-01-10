@@ -71,7 +71,7 @@ async def start_command(client: Bot, message):
             base64_string = message.text.split(" ", 1)[1]
             decoded = await decode(base64_string)
 
-            parts = decoded.split("-")
+            parts = decoded.split(":")
             if len(parts) != 2:
                 return await message.reply("❌ Invalid or expired link.")
 
