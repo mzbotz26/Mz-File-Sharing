@@ -25,7 +25,7 @@ CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1003487905802"))
 OWNER_ID = int(os.environ.get("OWNER_ID", "5673859971"))
 
 #Port
-PORT = os.environ.get("PORT", "8080")
+PORT = int(os.environ.get("PORT", "8080"))
 
 #Database 
 DB_URI = os.environ.get("DATABASE_URL", "")
@@ -44,7 +44,7 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "papajiurl.com")
 SHORTLINK_API = os.environ.get("SHORTLINK_API", "41ff6d51799b604c63f6cfe75eb5b7a58794a850")
 VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', 86400)) # Add time in seconds
-IS_VERIFY = os.environ.get("IS_VERIFY", "True")
+IS_VERIFY = os.environ.get("IS_VERIFY", "False") == "True"
 TUT_VID = os.environ.get("TUT_VID","howtoopennlinks/19")
 
 #start message
@@ -94,3 +94,4 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
+
