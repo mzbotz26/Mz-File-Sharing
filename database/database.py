@@ -26,7 +26,7 @@ default_verify = {
 def new_user(id):
     return {
         '_id': id,
-        'verify_status': default_verify
+        'verify_status': default_verify.copy()
     }
 
 async def present_user(user_id: int):
