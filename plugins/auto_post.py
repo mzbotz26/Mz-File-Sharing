@@ -63,7 +63,7 @@ async def auto_post(client, message):
 
     name = clean(file_name)
 
-    code = await encode(f"{client.db_channel.id}-{message.id}")
+    code = await encode(f"{client.db_channel.id}:{message.id}")
     link = f"https://t.me/{client.username}?start={code}"
 
     title, season, episode = parse_series(name)
