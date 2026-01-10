@@ -5,7 +5,7 @@ from pyrogram.enums import ParseMode
 from config import CHANNEL_ID, TMDB_API_KEY
 from database.database import get_series, save_series, update_series_episodes
 
-POST_CHANNEL = -1001234567890   # apna POST channel id yahan daalo
+POST_CHANNEL = -1001678291887   # apna POST channel id yahan daalo
 
 # ---------------- Utils ----------------
 
