@@ -140,20 +140,12 @@ async def start_command(client: Bot, message):
 @Bot.on_message(filters.command("start") & filters.private)
 async def force_sub(client, message):
 
-    buttons = []
-
-    if FORCESUB_CHANNEL:
-        buttons.append([InlineKeyboardButton("Join Channel 1", url=client.invitelink)])
-
-    if FORCESUB_CHANNEL2:
-        buttons.append([InlineKeyboardButton("Join Channel 2", url=client.invitelink2)])
-
-    if FORCESUB_CHANNEL3:
-        buttons.append([InlineKeyboardButton("Join Channel 3", url=client.invitelink3)])
-
-    buttons.append([
-        InlineKeyboardButton("Try Again", url=f"https://t.me/{client.username}?start")
-    ])
+    buttons = [
+        [InlineKeyboardButton("Join Channel 1", url=client.invitelink)],
+        [InlineKeyboardButton("Join Channel 2", url=client.invitelink2)],
+        [InlineKeyboardButton("Join Channel 3", url=client.invitelink3)],
+        [InlineKeyboardButton("Try Again", url=f"https://t.me/{client.username}?start")]
+    ]
 
     await message.reply(
         FORCE_MSG.format(first=message.from_user.first_name),
