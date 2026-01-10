@@ -46,7 +46,7 @@ def tmdb_movie(title):
 
 # ---------- AUTO POST ----------
 
-@Bot.on_message(filters.chat(lambda _, __, m: m.chat.id == m._client.db_channel.id))
+@Bot.on_message(filters.chat(CHANNEL_ID))
 async def auto_post(client, message):
 
     if not message.document:
