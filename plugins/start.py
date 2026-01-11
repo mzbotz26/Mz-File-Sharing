@@ -14,7 +14,7 @@ from database.database import add_user, full_userbase, present_user
 
 # ================= START COMMAND =================
 
-@Bot.on_message(filters.command("start") & filters.private & subscribed)
+@Bot.on_message(filters.command("start", prefixes="/") & filters.private & subscribed)
 async def start_command(client: Bot, message):
 
     user_id = message.from_user.id
