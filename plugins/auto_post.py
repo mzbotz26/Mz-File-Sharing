@@ -72,7 +72,7 @@ async def auto_post(client,message):
     raw=clean(name)
 
     title=normalize_title(raw)
-    db_title=title.lower()
+    db_title=title.lower().strip()
 
     res=get_res(raw)
     codec=get_codec(raw)
