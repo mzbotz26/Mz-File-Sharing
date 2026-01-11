@@ -15,7 +15,6 @@ from database.database import db_verify_status, db_update_verify_status
 # ================= FORCE SUB FILTER =================
 
 async def is_subscribed(filter, client, update):
-
     user_id = update.from_user.id
 
     if user_id in ADMINS:
@@ -26,16 +25,12 @@ async def is_subscribed(filter, client, update):
             continue
         try:
             member = await client.get_chat_member(channel_id, user_id)
-
             if member.status not in (
                 ChatMemberStatus.OWNER,
                 ChatMemberStatus.ADMINISTRATOR,
                 ChatMemberStatus.MEMBER
             ):
                 return False
-
-        except UserNotParticipant:
-            return False
         except:
             return False
 
