@@ -47,7 +47,7 @@ SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "papajiurl.com")
 SHORTLINK_API = os.environ.get("SHORTLINK_API", "41ff6d51799b604c63f6cfe75eb5b7a58794a850")
 VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', 86400)) # Add time in seconds
 IS_VERIFY = os.environ.get("IS_VERIFY", "True") == "True"
-TUT_VID = os.environ.get("TUT_VID","howtoopennlinks/19")
+TUT_VID = os.environ.get("TUT_VID","https://t.me/howtoopennlinks/19")
 
 #start message
 START_MSG = os.environ.get("START_MESSAGE", "<b>ʜᴇʟʟᴏ {first}\n\n ɪ ᴀᴍ ᴍᴜʟᴛɪ ғɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ , ɪ ᴄᴀɴ sᴛᴏʀᴇ ᴘʀɪᴠᴀᴛᴇ ғɪʟᴇs ɪɴ sᴘᴇᴄɪғɪᴇᴅ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴏᴛʜᴇʀ ᴜsᴇʀs ᴄᴀɴ ᴀᴄᴄᴇss ɪᴛ ғʀᴏᴍ sᴘᴇᴄɪᴀʟ ʟɪɴᴋ » @ultroidofficial</b>")
