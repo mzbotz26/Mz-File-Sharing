@@ -10,7 +10,7 @@ from database.database import add_user, full_userbase, present_user
 
 # ---------------- START (SUBSCRIBED) ----------------
 
-@Bot.on_message(filters.private & filters.command("start") & subscribed)
+@Bot.on_message(filters.command("start") & filters.private & subscribed)
 async def start(client,message):
 
     uid=message.from_user.id
