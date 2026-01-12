@@ -102,3 +102,6 @@ async def approve_request(request_text):
 
 async def clear_requests():
     await requests_col.delete_many({})
+
+async def get_one_series():
+    return await series_catalog.find_one()
