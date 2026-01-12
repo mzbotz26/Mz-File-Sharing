@@ -6,6 +6,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 
+from database.database import get_one_series
 from bot import Bot
 from config import *
 from helper_func import (
@@ -221,3 +222,8 @@ async def broadcast(client, message):
         total += 1
 
     await message.reply(f"Broadcast Done\n\nTotal: {total}\nSuccess: {success}\nFailed: {fail}")
+
+@Bot.on_message(filters.command("debugseries") & filters.private & filters.user(ADMINS))
+async def debug_series(client, message):
+    data = await get_one_series()
+    await message.reply(str(data))
