@@ -1,20 +1,18 @@
-
-# --- For-Bot-Working --------- #
+# Telegram
 pyrogram
-TgCrypto
+tgcrypto
 pyromod
-# --- For-Database ------------ #
-pymongo
+
+# Database
 motor
-umongo
+pymongo
 dnspython
-marshmallow
-# --- For-Web-Response ------- #
-pytz
+
+# Utilities
 requests
-bs4
 thefuzz
 shortzy
 aiohttp
 aiofiles
-asyncio
+pytz
+bs4
