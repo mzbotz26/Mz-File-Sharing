@@ -13,12 +13,34 @@ def clean(name):
 
 def normalize_title(name):
     name = name.lower()
+
+    # remove brackets
     name = re.sub(r"\(.*?\)|\[.*?\]", "", name)
-    name = re.sub(r"\d{4}", "", name)
+
+    # remove year
+    name = re.sub(r"\b(19|20)\d{2}\b", "", name)
+
+    # remove version tags
+    name = re.sub(r"v\d+|p\d+", "", name)
+
+    # remove languages
+    name = re.sub(r"hindi|telugu|tamil|malayalam|kannada|english|dual|multi", "", name)
+
+    # remove rip / source
     name = re.sub(r"webrip|webdl|web-dl|hdrip|bluray|brrip|dvdrip|camrip|prehd|hdtc", "", name)
-    name = re.sub(r"x264|x265|hevc|h264|h265", "", name)
-    name = re.sub(r"\d{3,4}p", "", name)
+
+    # remove codecs
+    name = re.sub(r"x264|x265|hevc|h264|h265|10bit|8bit", "", name)
+
+    # remove resolution
+    name = re.sub(r"\b\d{3,4}p\b", "", name)
+
+    # remove junk tags
+    name = re.sub(r"line|hc|esub|sub|mkv|mp4|avi", "", name)
+
+    # clean spaces
     name = re.sub(r"\s+", " ", name)
+
     return name.strip()
 
 # ================= DETECT =================
