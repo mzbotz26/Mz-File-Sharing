@@ -84,8 +84,8 @@ async def auto_post(client, message):
     poster, tmdb_year = tmdb_fetch(title)
     show_year = year or tmdb_year or "N/A"
 
-    # PERFECT MERGE KEY
-    db_title = f"{title.lower()}_{show_year}"
+    merge_title = re.sub(r"\s+"," ", title.lower().strip())
+    db_title = f"{merge_title}_{show_year}"
 
     code = await encode(f"get-{message.id * abs(client.db_channel.id)}")
     link = f"https://t.me/{client.username}?start={code}"
