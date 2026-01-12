@@ -1,4 +1,5 @@
-import re, requests
+import re, requests, PTN
+from thefuzz import fuzz
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 from bot import Bot
@@ -6,55 +7,12 @@ from config import CHANNEL_ID, TMDB_API_KEY, POST_CHANNEL
 from helper_func import encode
 from database.database import get_series, save_series, update_series_episodes
 
-# ---------------- UTILS ----------------
-
-def clean_name(name):
-    name = name.replace(".", " ").replace("_", " ")
-    name = re.sub(r"\(.*?\)|\[.*?\]", "", name)
-    name = re.sub(r"\d{3,4}p.*", "", name, flags=re.I)
-    name = re.sub(r"x264|x265|hevc|h264|h265","",name,flags=re.I)
-    name = re.sub(r"webrip|webdl|web-dl|hdrip|bluray|brrip|dvdrip|camrip|prehd|hdtc","",name,flags=re.I)
-    name = re.sub(r"amzn|nf|dsnp|prime|hotstar|zee5|sonyliv","",name,flags=re.I)
-    name = re.sub(r"\s+"," ",name)
-    return name.strip().title()
-
-def get_resolution(n):
-    if "2160" in n: return "4K"
-    if "1080" in n: return "1080p"
-    if "720" in n: return "720p"
-    if "480" in n: return "480p"
-    return "HD"
-
-def get_codec(n):
-    return "x265" if "x265" in n.lower() or "hevc" in n.lower() else "x264"
-
-def get_quality(n):
-    for q in ["web-dl","webrip","hdrip","bluray","brrip","dvdrip","camrip","prehd","hdtc"]:
-        if q in n.lower(): return q.upper()
-    return "WEB-DL"
-
-def get_lang(n):
-    langs=[]
-    for k,v in {
-        "hindi":"Hindi","tel":"Telugu","tam":"Tamil","mal":"Malayalam",
-        "kan":"Kannada","guj":"Gujarati","mar":"Marathi","pun":"Punjabi",
-        "ben":"Bengali","eng":"English"
-    }.items():
-        if k in n.lower():
-            langs.append(v)
-    return " ".join(langs) if langs else "Unknown"
-
-def format_size(s):
-    if s >= 1024*1024*1024:
-        return f"{s/(1024*1024*1024):.2f}GB"
-    return f"{s/(1024*1024):.1f}MB"
-
 # ---------------- TMDB ----------------
 
-def tmdb_fetch(title):
+def tmdb_fetch(title, is_series=False):
+    url = "tv" if is_series else "movie"
     r = requests.get(
-        "https://api.themoviedb.org/3/search/movie",
-        params={"api_key":TMDB_API_KEY,"query":title}
+        f"https://api.themoviedb.org/3/search/{url}?api_key={TMDB_API_KEY}&query={title}"
     ).json()
 
     if not r.get("results"):
@@ -64,12 +22,65 @@ def tmdb_fetch(title):
 
     poster = d.get("poster_path")
     imdb = round(d.get("vote_average",0),1)
-    year = d.get("release_date","")[:4]
+    year = (d.get("first_air_date") if is_series else d.get("release_date",""))[:4]
     story = d.get("overview","N/A")
-    genre = " / ".join([str(x) for x in d.get("genre_ids",[])])
-    lang = d.get("original_language","").upper()
+    lang = d.get("original_language","N/A").upper()
+
+    genres=[]
+    if "genre_ids" in d:
+        for g in d["genre_ids"]:
+            genres.append(str(g))
+    genre=" / ".join(genres) if genres else "N/A"
 
     return poster, imdb, year, story, genre, lang
+
+# ---------------- PARSER ----------------
+
+LANG_MAP = {
+    "hindi":"Hindi","hin":"Hindi",
+    "telugu":"Telugu","tam":"Tamil","tamil":"Tamil",
+    "malayalam":"Malayalam","kan":"Kannada","marathi":"Marathi",
+    "punjabi":"Punjabi","gujarati":"Gujarati",
+    "dual":"Dual Audio","multi":"Multi Audio"
+}
+
+def detect_language(name):
+    langs=[]
+    for k,v in LANG_MAP.items():
+        if k in name.lower():
+            langs.append(v)
+    return " ".join(sorted(set(langs))) if langs else "Unknown"
+
+def detect_quality(name):
+    for q in ["web-dl","webrip","hdrip","bluray","brrip","dvdrip","camrip","prehd","hdtc"]:
+        if q in name.lower():
+            return q.upper()
+    return "WEB-DL"
+
+def detect_resolution(name):
+    if "2160" in name: return "4K"
+    if "1080" in name: return "1080p"
+    if "720" in name: return "720p"
+    if "480" in name: return "480p"
+    return "HD"
+
+def detect_codec(name):
+    if "x265" in name or "hevc" in name: return "x265"
+    return "x264"
+
+def parse_filename(name):
+    clean = name.replace("_"," ").replace("."," ")
+    clean = re.sub(r"\[.*?\]|\(.*?\)", "", clean)
+    parsed = PTN.parse(clean)
+
+    title = parsed.get("title","").strip()
+    year = parsed.get("year")
+    season = parsed.get("season")
+    episode = parsed.get("episode")
+
+    is_series = bool(season or episode)
+
+    return title, year, season, episode, is_series
 
 # ---------------- AUTO POST ----------------
 
@@ -81,30 +92,87 @@ async def auto_post(client, message):
 
     media = message.document or message.video
     fname = media.file_name
+    size = media.file_size
 
-    title = clean_name(fname)
+    title, year, season, episode, is_series = parse_filename(fname)
 
-    # 🔥 SAME TITLE ALWAYS = MERGE WORK
-    db_title = title.lower()
+    db_title = title.lower().strip()
 
-    quality = get_quality(fname)
-    res = get_resolution(fname)
-    codec = get_codec(fname)
-    langs = get_lang(fname)
-    size = format_size(media.file_size)
+    lang = detect_language(fname)
+    quality = detect_quality(fname)
+    res = detect_resolution(fname)
+    codec = detect_codec(fname)
+
+    tag = f"{lang} | {res} | {codec} | {quality}"
+
+    if is_series:
+        se = f"S{season:02d}" if season else ""
+        ep = f"E{episode:02d}" if isinstance(episode,int) else ""
+        tag = f"{se}{ep} | " + tag
 
     code = await encode(f"get-{message.id * abs(client.db_channel.id)}")
     link = f"https://t.me/{client.username}?start={code}"
 
-    poster, imdb, year, story, genre, lang = tmdb_fetch(title)
+    size_mb = round(size/1024/1024,2)
+    size_text = f"{size_mb}MB" if size_mb < 1024 else f"{round(size_mb/1024,2)}GB"
 
-    line = f"📁 {langs} | {res} | {codec} | {quality}\n╰─➤ <a href='{link}'>Click Here</a> ({size})"
+    line = f"📁 {tag}\n╰─➤ <a href='{link}'>Click Here</a> ({size_text})"
+
+    poster, imdb, y, story, genre, lang2 = tmdb_fetch(title, is_series)
+
+    show_year = year or y or "N/A"
+
+    head = f"🎬 {title} ({show_year})"
+    if is_series:
+        head += " [Series]"
+    else:
+        head += " [Movie]"
 
     old = await get_series(db_title)
 
-    text = f"""🎬 {title} ({year})
+    text = f"""{head}
 
 ⭐ IMDb: {imdb}/10
+🎭 Genre: {genre}
+🌐 Language: {lang}
+
+📖 Story:
+{story}
+
+"""
+
+    if old:
+        eps = old["episodes"]
+        if line not in eps:
+            eps.append(line)
+            await update_series_episodes(db_title, eps)
+
+        for e in eps:
+            text += e + "\n\n"
+
+        text += "Join Our Channel ❤️\n👉 https://t.me/MzMoviiez"
+
+        await client.edit_message_text(
+            POST_CHANNEL,
+            old["post_id"],
+            text,
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    text += line + "\n\nJoin Our Channel ❤️\n👉 https://t.me/MzMoviiez"
+
+    if poster:
+        msg = await client.send_photo(
+            POST_CHANNEL,
+            f"https://image.tmdb.org/t/p/w500{poster}",
+            caption=text,
+            parse_mode=ParseMode.HTML
+        )
+    else:
+        msg = await client.send_message(POST_CHANNEL, text, parse_mode=ParseMode.HTML)
+
+    await save_series(db_title, msg.id, [line])⭐ IMDb: {imdb}/10
 🎭 Genre: {genre}
 🌐 Language: {langs}
 
