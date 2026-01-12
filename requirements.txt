@@ -13,6 +13,7 @@ marshmallow
 pytz
 requests
 bs4
+thefuzz
 shortzy
 aiohttp
 aiofiles
