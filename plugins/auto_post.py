@@ -1,5 +1,4 @@
 import re, requests, PTN
-from thefuzz import fuzz
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 from bot import Bot
@@ -27,17 +26,17 @@ def tmdb_fetch(title, is_series=False):
     lang = d.get("original_language","N/A").upper()
 
     genres=[]
-    if "genre_ids" in d:
-        for g in d["genre_ids"]:
-            genres.append(str(g))
+    for gid in d.get("genre_ids",[]):
+        genres.append(str(gid))
     genre=" / ".join(genres) if genres else "N/A"
 
     return poster, imdb, year, story, genre, lang
 
-# ---------------- PARSER ----------------
+# ---------------- DETECT ----------------
 
 LANG_MAP = {
     "hindi":"Hindi","hin":"Hindi",
+    "english":"English","eng":"English",
     "telugu":"Telugu","tam":"Tamil","tamil":"Tamil",
     "malayalam":"Malayalam","kan":"Kannada","marathi":"Marathi",
     "punjabi":"Punjabi","gujarati":"Gujarati",
@@ -46,27 +45,30 @@ LANG_MAP = {
 
 def detect_language(name):
     langs=[]
+    n=name.lower()
     for k,v in LANG_MAP.items():
-        if k in name.lower():
+        if k in n:
             langs.append(v)
     return " ".join(sorted(set(langs))) if langs else "Unknown"
 
-def detect_quality(name):
+def detect_quality(n):
     for q in ["web-dl","webrip","hdrip","bluray","brrip","dvdrip","camrip","prehd","hdtc"]:
-        if q in name.lower():
+        if q in n.lower():
             return q.upper()
     return "WEB-DL"
 
-def detect_resolution(name):
-    if "2160" in name: return "4K"
-    if "1080" in name: return "1080p"
-    if "720" in name: return "720p"
-    if "480" in name: return "480p"
+def detect_resolution(n):
+    if "2160" in n: return "4K"
+    if "1080" in n: return "1080p"
+    if "720" in n: return "720p"
+    if "480" in n: return "480p"
     return "HD"
 
-def detect_codec(name):
-    if "x265" in name or "hevc" in name: return "x265"
+def detect_codec(n):
+    if "x265" in n.lower() or "hevc" in n.lower(): return "x265"
     return "x264"
+
+# ---------------- TITLE PARSER ----------------
 
 def parse_filename(name):
     clean = name.replace("_"," ").replace("."," ")
@@ -96,6 +98,9 @@ async def auto_post(client, message):
 
     title, year, season, episode, is_series = parse_filename(fname)
 
+    if not title:
+        return
+
     db_title = title.lower().strip()
 
     lang = detect_language(fname)
@@ -105,6 +110,71 @@ async def auto_post(client, message):
 
     tag = f"{lang} | {res} | {codec} | {quality}"
 
+    if is_series:
+        se = f"S{season:02d}" if season else ""
+        ep = f"E{episode:02d}" if isinstance(episode,int) else ""
+        tag = f"{se}{ep} | " + tag
+
+    code = await encode(f"get-{message.id * abs(client.db_channel.id)}")
+    link = f"https://t.me/{client.username}?start={code}"
+
+    size_mb = round(size/1024/1024,2)
+    size_text = f"{size_mb}MB" if size_mb < 1024 else f"{round(size_mb/1024,2)}GB"
+
+    line = f"📁 {tag}\n╰─➤ <a href='{link}'>Click Here</a> ({size_text})"
+
+    poster, imdb, y, story, genre, lang2 = tmdb_fetch(title, is_series)
+
+    show_year = year or y or "N/A"
+
+    head = f"🎬 {title} ({show_year})"
+    head += " [Series]" if is_series else " [Movie]"
+
+    old = await get_series(db_title)
+
+    text = f"""{head}
+
+⭐ IMDb: {imdb}/10
+🎭 Genre: {genre}
+🌐 Language: {lang}
+
+📖 Story:
+{story}
+
+"""
+
+    if old:
+        eps = old["episodes"]
+        if line not in eps:
+            eps.append(line)
+            await update_series_episodes(db_title, eps)
+
+        for e in eps:
+            text += e + "\n\n"
+
+        text += "Join Our Channel ♥️\n👉 https://t.me/MzMoviiez"
+
+        await client.edit_message_text(
+            POST_CHANNEL,
+            old["post_id"],
+            text,
+            parse_mode=ParseMode.HTML
+        )
+        return
+
+    text += line + "\n\nJoin Our Channel ♥️\n👉 https://t.me/MzMoviiez"
+
+    if poster:
+        msg = await client.send_photo(
+            POST_CHANNEL,
+            f"https://image.tmdb.org/t/p/w500{poster}",
+            caption=text,
+            parse_mode=ParseMode.HTML
+        )
+    else:
+        msg = await client.send_message(POST_CHANNEL, text, parse_mode=ParseMode.HTML)
+
+    await save_series(db_title, msg.id, [line])
     if is_series:
         se = f"S{season:02d}" if season else ""
         ep = f"E{episode:02d}" if isinstance(episode,int) else ""
