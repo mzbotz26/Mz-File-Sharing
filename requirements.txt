@@ -4,12 +4,12 @@ tgcrypto
 pyromod
 
 # Database
-pip install parse-torrent-name
 motor
 pymongo
 dnspython
 
 # Utilities
+pip install parse-torrent-name
 requests
 thefuzz
 shortzy
