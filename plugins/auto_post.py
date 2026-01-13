@@ -17,7 +17,7 @@ def clean_title_display(text):
     remove_words = [
         "hindi","telugu","tamil","malayalam","dual","audio","uncut","south",
         "webdl","webrip","bluray","hdrip","brrip","x264","x265","hevc",
-        "dd","ddp","aac","kbps","mk","mkv","mp4"
+        "dd","ddp","aac","kbps","mk","mkv","mp4","Dd5 1","224Kbps"
     ]
 
     for w in remove_words:
