@@ -1,5 +1,5 @@
 import re, requests
-import parse_torrent_name as PTN
+import PTN
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 from bot import Bot
