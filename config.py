@@ -31,7 +31,7 @@ PORT = int(os.environ.get("PORT", "8080"))
 
 #Database 
 DB_URI = os.environ.get("DATABASE_URL", "")
-DB_NAME = os.environ.get("DATABASE_NAME", "MzFileShare")
+DB_NAME = os.environ.get("DATABASE_NAME", "mzfiles")
 
 #force sub channel id, if you want enable force sub
 FORCESUB_CHANNEL = int(os.environ.get("FORCESUB_CHANNEL", "-1001956378045"))
