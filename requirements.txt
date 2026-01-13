@@ -9,11 +9,11 @@ pymongo
 dnspython
 
 # Utilities
-pip install parse-torrent-name
+parse-torrent-name
 requests
 thefuzz
 shortzy
 aiohttp
 aiofiles
 pytz
-bs4
+beautifulsoup4
