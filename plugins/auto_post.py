@@ -1,0 +1,168 @@
+import re, requests, asyncio
+import PTN
+from pyrogram import filters
+from pyrogram.enums import ParseMode
+from bot import Bot
+from config import CHANNEL_ID, TMDB_API_KEY, POST_CHANNEL
+from helper_func import encode
+from database.database import get_series, save_series, update_series_episodes
+
+locks = {}
+
+# ---------------- TITLE CLEAN ----------------
+
+def extract_movie_name(text):
+    text = text.replace(".", " ").replace("_", " ")
+    text = re.sub(r"\d{3,4}p","", text, flags=re.I)
+    text = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|uncut|south|web|webdl|webrip|bluray|hdrip|brrip|x264|x265|hevc|dd|ddp|aac|kbps|mk|mkv|mp4)\b","", text, flags=re.I)
+    text = re.sub(r"[^a-zA-Z0-9_ ]","", text)
+    text = re.sub(r"\s+"," ", text).strip()
+    return text.title()
+
+def merge_key_title(title):
+    return re.sub(r"[^a-z0-9]","", title.lower())
+
+# ---------------- UTILS ----------------
+
+def bytes_to_size(size):
+    mb = round(size / 1024 / 1024, 2)
+    return f"{mb} MB" if mb < 1024 else f"{round(mb/1024,2)} GB"
+
+def detect_source(name):
+    for s in ["bluray","brrip","webdl","webrip","hdrip","cam","hdtc","prehd"]:
+        if s in name.lower():
+            return s.upper()
+    return "WEB-DL"
+
+def detect_languages(name):
+    langs=[]
+    for l in ["hindi","english","telugu","tamil","malayalam","marathi","punjabi","korean","japanese"]:
+        if l in name.lower():
+            langs.append(l.capitalize())
+    return " / ".join(sorted(set(langs))) if langs else "Unknown"
+
+def sort_key(x):
+    nums = re.findall(r"\d+", x)
+    return [int(n) for n in nums] if nums else [0]
+
+# ---------------- TMDB ----------------
+
+def tmdb_fetch(title):
+    try:
+        search = requests.get(
+            f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API_KEY}&query={title}"
+        ).json()
+    except:
+        return None,"N/A","N/A","N/A","N/A"
+
+    if not search.get("results"):
+        return None,"N/A","N/A","N/A","N/A"
+
+    movie = search["results"][0]
+    movie_id = movie["id"]
+
+    details = requests.get(
+        f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_API_KEY}"
+    ).json()
+
+    poster = details.get("poster_path")
+    rating = str(details.get("vote_average","N/A"))
+    year = details.get("release_date","")[:4]
+    story = details.get("overview","N/A")
+
+    genres = [g["name"] for g in details.get("genres",[])]
+    genres_text = " / ".join(genres) if genres else "N/A"
+
+    return poster,rating,year,story,genres_text
+
+# ---------------- MAIN ----------------
+
+@Bot.on_message(filters.chat(CHANNEL_ID))
+async def auto_post(client,message):
+
+    if not (message.document or message.video):
+        return
+
+    media = message.document or message.video
+    fname = media.file_name
+    size = media.file_size
+
+    parsed = PTN.parse(fname)
+
+    raw_title = parsed.get("title","")
+    year = parsed.get("year")
+
+    title = extract_movie_name(raw_title)
+    if not title:
+        return
+
+    poster,rating,tmdb_year,story,genres = tmdb_fetch(title)
+
+    show_year = year or tmdb_year or "N/A"
+
+    merge_key = f"{merge_key_title(title)}_{show_year}"
+
+    if merge_key not in locks:
+        locks[merge_key] = asyncio.Lock()
+
+    async with locks[merge_key]:
+
+        code = await encode(f"get-{message.id*abs(client.db_channel.id)}")
+        link = f"https://t.me/{client.username}?start={code}"
+
+        resolution = parsed.get("resolution","")
+        codec = parsed.get("codec","x264")
+        source = detect_source(fname)
+
+        size_text = bytes_to_size(size)
+
+        line = f"📂 ➤ {resolution} {codec} {source} ➪ <a href='{link}'>Get File</a> ({size_text})"
+
+        head = f"""<b>🔖 Title:</b> {title}
+
+<b>🎬 Genres:</b> {genres}
+<b>⭐️ Rating:</b> {rating}/10
+<b>📆 Year:</b> {show_year}
+<b>📕 Story:</b> {story}
+
+"""
+
+        footer = f"""
+
+<b>🔊 Audio :-</b> {detect_languages(fname)}
+
+<b>💪 Powered By :</b> <a href="https://t.me/MzMoviiez">MzMoviiez</a>
+"""
+
+        old = await get_series(merge_key)
+
+        if old:
+            eps = old["episodes"]
+            if line not in eps:
+                eps.append(line)
+                eps.sort(key=sort_key)
+                await update_series_episodes(merge_key, eps)
+
+            text = head + "\n".join(eps) + footer
+
+            await client.edit_message_text(
+                POST_CHANNEL,
+                old["post_id"],
+                text,
+                parse_mode=ParseMode.HTML
+            )
+            return
+
+        text = head + line + footer
+
+        if poster:
+            msg = await client.send_photo(
+                POST_CHANNEL,
+                f"https://image.tmdb.org/t/p/w500{poster}",
+                caption=text,
+                parse_mode=ParseMode.HTML
+            )
+        else:
+            msg = await client.send_message(POST_CHANNEL,text,parse_mode=ParseMode.HTML)
+
+        await save_series(merge_key,msg.id,[line])
