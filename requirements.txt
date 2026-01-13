@@ -4,6 +4,7 @@ tgcrypto
 pyromod
 
 # Database
+pip install parse-torrent-name
 motor
 pymongo
 dnspython
