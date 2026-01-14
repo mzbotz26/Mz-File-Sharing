@@ -26,7 +26,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     if data == "about":
         await query.message.edit_text(
-            text = f"<b>○ ᴏᴡɴᴇʀ : <a href='tg://user?id={OWNER_ID}'>Mr.Sam</a>\n"
+            text = f"<b>○ ᴏᴡɴᴇʀ : <a href='tg://user?id={OWNER_ID}'>ℳℛ.ЅᎯℳ</a>\n"
                    f"○ ᴍʏ ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/MzBotz'>Channel</a>\n"
                    f"○ ᴍᴏᴠɪᴇs ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/MzMoviiez'>MzMoviiez</a>\n"
                    f"○ ᴏᴜʀ ᴄᴏᴍᴍᴜɴɪᴛʏ : <a href='https://t.me/mzbotzsupport'>Chat</a></b>",
