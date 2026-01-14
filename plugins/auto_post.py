@@ -36,6 +36,9 @@ def clean_title(raw):
 
     return raw.title()
 
+def merge_key_title(title):
+    return re.sub(r"[^a-z0-9]", "", title.lower())
+
 # ---------------- UTILS ----------------
 
 def bytes_to_size(size):
