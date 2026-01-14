@@ -1,6 +1,7 @@
 # © Codeflix / CodexBotz Fixed by ChatGPT
 
 import asyncio, time, random, string
+from cbb import start_buttons
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
