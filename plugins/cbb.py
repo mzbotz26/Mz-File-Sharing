@@ -10,7 +10,7 @@ def start_buttons():
         [
             [
                 InlineKeyboardButton("ℹ️ About", callback_data="about"),
-                InlineKeyboardButton("📢 Channel", url="https://t.me/ultroid_official")
+                InlineKeyboardButton("📢 Channel", url="https://t.me/mzbotz")
             ],
             [
                 InlineKeyboardButton("❌ Close", callback_data="close")
@@ -26,16 +26,16 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     if data == "about":
         await query.message.edit_text(
-            text = f"<b>○ ᴏᴡɴᴇʀ : <a href='tg://user?id={OWNER_ID}'>ᴍɪᴋᴇʏ</a>\n"
-                   f"○ ᴍʏ ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/ultroid_official'>Channel</a>\n"
-                   f"○ ᴍᴏᴠɪᴇs ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/MovizTube'>MovizTube</a>\n"
-                   f"○ ᴏᴜʀ ᴄᴏᴍᴍᴜɴɪᴛʏ : <a href='https://t.me/ultroidofficial_chat'>Chat</a></b>",
+            text = f"<b>○ ᴏᴡɴᴇʀ : <a href='tg://user?id={OWNER_ID}'>Mr.Sam</a>\n"
+                   f"○ ᴍʏ ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/MzBotz'>Channel</a>\n"
+                   f"○ ᴍᴏᴠɪᴇs ᴜᴘᴅᴀᴛᴇs : <a href='https://t.me/MzMoviiez'>MzMoviiez</a>\n"
+                   f"○ ᴏᴜʀ ᴄᴏᴍᴍᴜɴɪᴛʏ : <a href='https://t.me/mzbotzsupport'>Chat</a></b>",
             disable_web_page_preview = True,
             reply_markup = InlineKeyboardMarkup(
                 [
                     [
                         InlineKeyboardButton("⚡️ Close", callback_data="close"),
-                        InlineKeyboardButton("🍁 Youtube", url="https://www.youtube.com/@ultroidofficial")
+                        InlineKeyboardButton("🍁 Backup", url="https://t.me/MzMoviiez")
                     ]
                 ]
             )
