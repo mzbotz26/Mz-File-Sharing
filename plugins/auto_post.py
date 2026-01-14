@@ -31,9 +31,6 @@ def clean_title(raw):
     # remove long numbers like 224, 320, 2025 etc
     raw = re.sub(r"\b\d{3,}\b", "", raw)
 
-    # remove trailing single digits
-    raw = re.sub(r"\b\d\b", "", raw)
-
     # remove symbols
     raw = re.sub(r"[^a-zA-Z0-9 ]", "", raw)
 
