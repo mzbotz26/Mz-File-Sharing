@@ -95,15 +95,33 @@ def imdb_fetch(title):
 def tmdb_fetch(title, is_series=False, season=None):
     try:
         url = "tv" if is_series else "movie"
-        s = requests.get(f"https://api.themoviedb.org/3/search/{url}?api_key={TMDB_API_KEY}&query={title}&language=hi-IN").json()
-        if not s.get("results"): return None,None,None,None,None,None
+
+        def search(lang):
+            return requests.get(
+                f"https://api.themoviedb.org/3/search/{url}?api_key={TMDB_API_KEY}&query={title}&language={lang}"
+            ).json()
+
+        s = search("hi-IN")
+        if not s.get("results"):
+            s = search("en-US")
+            if not s.get("results"):
+                return None,None,None,None,None,None
 
         mid = s["results"][0]["id"]
 
-        if is_series and season:
-            d = requests.get(f"https://api.themoviedb.org/3/tv/{mid}/season/{season}?api_key={TMDB_API_KEY}&language=hi-IN").json()
-        else:
-            d = requests.get(f"https://api.themoviedb.org/3/{url}/{mid}?api_key={TMDB_API_KEY}&language=hi-IN").json()
+        def detail(lang):
+            if is_series and season:
+                return requests.get(
+                    f"https://api.themoviedb.org/3/tv/{mid}/season/{season}?api_key={TMDB_API_KEY}&language={lang}"
+                ).json()
+            else:
+                return requests.get(
+                    f"https://api.themoviedb.org/3/{url}/{mid}?api_key={TMDB_API_KEY}&language={lang}"
+                ).json()
+
+        d = detail("hi-IN")
+        if not d.get("overview"):
+            d = detail("en-US")
 
         poster = "https://image.tmdb.org/t/p/w500"+d.get("poster_path","") if d.get("poster_path") else None
         rating = str(d.get("vote_average","N/A"))
@@ -112,6 +130,7 @@ def tmdb_fetch(title, is_series=False, season=None):
         genres = " / ".join([g["name"] for g in d.get("genres",[])])
 
         return poster,rating,year,story,genres,mid
+
     except:
         return None,None,None,None,None,None
 
