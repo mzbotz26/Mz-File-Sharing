@@ -15,23 +15,33 @@ locks = {}
 
 def clean_title(raw):
     raw = raw.replace(".", " ").replace("_", " ")
-    
+
     # remove year
     raw = re.sub(r"\b(19|20)\d{2}\b", "", raw)
 
-    # remove quality & codec
-    raw = re.sub(r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd)\b", "", raw, flags=re.I)
+    # remove quality / codec / source
+    raw = re.sub(
+        r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd)\b",
+        "",
+        raw,
+        flags=re.I
+    )
 
-    # remove audio & tech words
-    raw = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|kbps|bps|uncut|south|proper|extended)\b", "", raw, flags=re.I)
+    # remove audio / tech words
+    raw = re.sub(
+        r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|kbps|bps|uncut|south|proper|extended|mk)\b",
+        "",
+        raw,
+        flags=re.I
+    )
 
-    # remove numbers like 224, 1, 2 etc
-    raw = re.sub(r"\b\d+\b", "", raw)
+    # remove only big numbers (3 or more digits)
+    raw = re.sub(r"\b\d{3,}\b", "", raw)
 
-    # clean symbols
-    raw = re.sub(r"[^a-zA-Z ]", "", raw)
+    # remove symbols
+    raw = re.sub(r"[^a-zA-Z0-9 ]", "", raw)
 
-    # spaces fix
+    # fix spaces
     raw = re.sub(r"\s+", " ", raw).strip()
 
     return raw.title()
