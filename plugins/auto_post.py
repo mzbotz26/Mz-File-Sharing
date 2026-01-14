@@ -14,28 +14,28 @@ locks = {}
 # ---------------- TITLE CLEAN ----------------
 
 def clean_title(raw):
-    raw = raw.replace(".", " ").replace("_", " ")
+    raw = raw.replace(".", " ").replace("_", " ").replace("-", " ")
 
     # remove year
     raw = re.sub(r"\b(19|20)\d{2}\b", "", raw)
 
-    # remove quality / codec / source
-    raw = re.sub(r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd|hd)\b","",raw,flags=re.I)
+    # remove quality / source / codec
+    raw = re.sub(r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd|hd)\b", "", raw, flags=re.I)
 
     # remove audio / tech words
-    raw = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|kbps|mbps|bps|uncut|south|proper|movie|esub|sub)\b","",raw,flags=re.I)
+    raw = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|kbps|bps|uncut|south|movie|proper|extended|mk|esub)\b", "", raw, flags=re.I)
 
-    # remove bitrate values like 224Kbps
-    raw = re.sub(r"\b\d+\s*(kbps|mbps|bps)\b","",raw,flags=re.I)
+    # remove standalone numbers except small ones like 2, 3
+    raw = re.sub(r"\b\d{3,}\b", "", raw)
 
-    # remove leftover single digits like "1"
-    raw = re.sub(r"\b[0-9]\b","",raw)
+    # remove brackets text
+    raw = re.sub(r"\(.*?\)", "", raw)
 
     # remove symbols
-    raw = re.sub(r"[^a-zA-Z0-9 ]","",raw)
+    raw = re.sub(r"[^a-zA-Z0-9 ]", "", raw)
 
     # fix spaces
-    raw = re.sub(r"\s+"," ",raw).strip()
+    raw = re.sub(r"\s+", " ", raw).strip()
 
     return raw.title()
 
