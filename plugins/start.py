@@ -118,17 +118,34 @@ async def start_command(client, message):
 
     # ================= NORMAL START =================
 
-    await message.reply_text(
-        START_MSG.format(
-            first=message.from_user.first_name,
-            last=message.from_user.last_name,
-            username=message.from_user.username,
-            mention=message.from_user.mention,
-            id=user_id
-        ),
-        quote=True,
-        disable_web_page_preview=True
+status_text = "✅ Verified" if verify_status['is_verified'] else "❌ Not Verified"
+expire_text = "∞" if verify_status['is_verified'] else get_exp_time(VERIFY_EXPIRE)
+
+text = f"""ʜᴇʟʟᴏ {message.from_user.mention}
+
+ɪ ᴀᴍ ᴍᴜʟᴛɪ ғɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ , ɪ ᴄᴀɴ sᴛᴏʀᴇ ᴘʀɪᴠᴀᴛᴇ ғɪʟᴇs ɪɴ sᴘᴇᴄɪғɪᴇᴅ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴏᴛʜᴇʀ ᴜsᴇʀs ᴄᴀɴ ᴀᴄᴄᴇss ɪᴛ ғʀᴏᴍ sᴘᴇᴄɪᴀʟ ʟɪɴᴋ » @ultroidofficial
+
+━━━━━━━━━━━━━━
+🔐 Verification : {status_text}
+⏳ Expiry : {expire_text}
+━━━━━━━━━━━━━━
+"""
+
+if START_PIC:
+    await client.send_photo(
+        chat_id=message.chat.id,
+        photo=START_PIC,
+        caption=text,
+        reply_markup=start_buttons(),
+        parse_mode=ParseMode.HTML
     )
+else:
+    await message.reply_text(
+        text,
+        reply_markup=start_buttons(),
+        disable_web_page_preview=True,
+        quote=True
+        )
 
 
 # ================= FORCE SUB HANDLER =================
