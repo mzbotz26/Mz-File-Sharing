@@ -1,5 +1,5 @@
-#(©)CodeXBotz
-#By @Codeflix_Bots
+
+#By @mzbotz
 
 
 
@@ -19,6 +19,7 @@ APP_ID = int(os.environ.get("APP_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 TMDB_API_KEY = os.environ.get("TMDB_API_KEY", "")
 POST_CHANNEL = int(os.environ.get("POST_CHANNEL", "-1001678291887"))
+START_PIC = "https://graph.org/ℳℛЅᎯℳ-01-14"
 
 #Your db channel Id
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1003487905802"))
