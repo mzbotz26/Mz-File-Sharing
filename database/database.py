@@ -119,3 +119,21 @@ async def save_series(title, post_id, episodes):
 
 async def update_series_episodes(title, episodes):
     await series_catalog.update_one({"_id": title},{"$set":{"episodes":episodes}})
+
+# ---------------- REQUEST APPROVAL ----------------
+
+async def approve_request(request_text):
+    data = await requests_col.find_one({"request": request_text})
+    if not data:
+        return None
+    await requests_col.update_one(
+        {"_id": data["_id"]},
+        {"$set": {"status": "approved"}}
+    )
+    return data
+
+async def get_requests(limit=20):
+    return requests_col.find().sort("_id", -1).limit(limit)
+
+async def clear_requests():
+    await requests_col.delete_many({})
