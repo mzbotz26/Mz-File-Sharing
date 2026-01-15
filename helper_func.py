@@ -1,6 +1,4 @@
-# (©)Codexbotz
-# Recoded By @Codeflix_Bots
-# Fixed & Production Optimized by ChatGPT
+# (©)Mzbotz
 
 import base64
 import re
