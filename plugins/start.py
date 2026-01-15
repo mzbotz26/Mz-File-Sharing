@@ -63,6 +63,12 @@ def build_user_caption(msg, is_premium=False):
     # remove @channel tags
     title = re.sub(r"@\w+", "", title)
 
+    # remove year
+    title = re.sub(r"\b(19|20)\d{2}\b", "", title)
+
+    # remove quality / format / language words
+    title = re.sub(r"\b(480p|720p|1080p|2160p|x264|webdl|webrip|bluray|hdrip|marathi|hindi|english|telugu|tamil|malayalam|kannada)\b","",title,flags=re.I)
+
     # replace separators
     title = title.replace(".", " ").replace("_", " ").replace("-", " ")
 
