@@ -262,7 +262,7 @@ async def send_verify(client,message,uid):
 
 # ================= CALLBACK =================
 
-@Bot.on_callback_query(filters.regex("premium"))
+@Bot.on_callback_query(filters.regex("^premium$"))
 async def prem(client,q):
     await q.message.edit(
         "👑 Premium Plans\n\n7 Days ₹10\n30 Days ₹30\n\nSend payment screenshot to Owner.",
@@ -271,11 +271,11 @@ async def prem(client,q):
         ])
     )
 
-@Bot.on_callback_query(filters.regex("refinfo"))
+@Bot.on_callback_query(filters.regex("^refinfo$"))
 async def ref(client,q):
     await q.message.edit("🎁 Invite 5 users → Get 30 Days Premium Free")
 
-@Bot.on_callback_query(filters.regex("mypremium"))
+@Bot.on_callback_query(filters.regex("^mypremium$"))
 async def myp(client,q):
     uid=q.from_user.id
     p=await get_premium(uid)
@@ -284,7 +284,7 @@ async def myp(client,q):
     left=int((p["expire_time"]-time.time())/3600)
     await q.message.edit(f"👑 Premium Active\n⏳ Left: {left} Hours")
 
-@Bot.on_callback_query(filters.regex("leaderboard"))
+@Bot.on_callback_query(filters.regex("^leaderboard$"))
 async def lb(client,q):
     await q.message.edit("🏆 Referral Leaderboard coming soon.")
 
