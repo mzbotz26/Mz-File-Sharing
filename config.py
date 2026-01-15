@@ -43,12 +43,12 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 # ================= SHORTLINK STEP 1 =================
 
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "papajiurl.com")
-SHORTLINK_API = os.environ.get("SHORTLINK_API", "PASTE_API_KEY_1")
+SHORTLINK_API = os.environ.get("SHORTLINK_API", "41ff6d51799b604c63f6cfe75eb5b7a58794a850")
 
 # ================= SHORTLINK STEP 2 =================
 
-SHORTLINK_URL2 = os.environ.get("SHORTLINK_URL2", "droplink.co")
-SHORTLINK_API2 = os.environ.get("SHORTLINK_API2", "PASTE_API_KEY_2")
+SHORTLINK_URL2 = os.environ.get("SHORTLINK_URL2", "shortxlinks.com")
+SHORTLINK_API2 = os.environ.get("SHORTLINK_API2", "3b623c80e2c2534a5eae0bae35777c4c1aedd154")
 
 # ================= VERIFY SYSTEM =================
 
@@ -58,7 +58,7 @@ IS_VERIFY = os.environ.get("IS_VERIFY", "True") == "True"
 VERIFY_STEP_TIME = int(os.environ.get("VERIFY_STEP_TIME", "43200"))
 
 VERIFY_TUT_1 = os.environ.get("VERIFY_TUT_1", "https://t.me/howtoopennlinks/19")
-VERIFY_TUT_2 = os.environ.get("VERIFY_TUT_2", "https://t.me/howtoopennlinks/20")
+VERIFY_TUT_2 = os.environ.get("VERIFY_TUT_2", "https://t.me/howtoopennlinks/21")
 
 # ================= START =================
 
