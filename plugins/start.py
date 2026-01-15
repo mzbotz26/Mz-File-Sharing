@@ -267,7 +267,7 @@ async def prem(client,q):
     await q.message.edit(
         "👑 Premium Plans\n\n7 Days ₹10\n30 Days ₹30\n\nSend payment screenshot to Owner.",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("📩 Contact Owner",url=f"https://t.me/{SamMarathi}")]
+            [InlineKeyboardButton("📩 Contact Owner",url=f"https://t.me/{OWNER_USERNAME}")]
         ])
     )
 
