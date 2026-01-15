@@ -236,7 +236,7 @@ async def start_command(client, message):
 
 # ================= VERIFY =================
 
-async async def send_verify(client,message,uid):
+async def send_verify(client,message,uid):
 
     token=''.join(random.choices(string.ascii_letters+string.digits,k=10))
     await update_verify_status(uid,verify_token=token,is_verified=False)
