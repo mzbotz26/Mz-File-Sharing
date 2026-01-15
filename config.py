@@ -28,7 +28,7 @@ FORCESUB_CHANNEL3 = int(os.environ.get("FORCESUB_CHANNEL3", "-1001931113198"))
 OWNER_ID = int(os.environ.get("OWNER_ID", "5673859971"))
 
 # 👉 ADD THIS (IMPORTANT)
-OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "MzMoviiez")
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME", "SamMarathi")
 
 # ================= DATABASE =================
 
