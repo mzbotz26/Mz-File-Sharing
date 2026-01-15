@@ -57,7 +57,17 @@ Enjoy premium access ❤️
 
 def build_user_caption(msg, is_premium=False):
     name = msg.document.file_name if msg.document else msg.video.file_name
-    title = name.rsplit(".",1)[0].replace("."," ").replace("_"," ").replace("-"," ")
+
+    title = name.rsplit(".",1)[0]
+
+    # remove @channel tags
+    title = re.sub(r"@\w+", "", title)
+
+    # replace separators
+    title = title.replace(".", " ").replace("_", " ").replace("-", " ")
+
+    # remove multiple spaces
+    title = re.sub(r"\s+", " ", title).strip()
 
     quality="N/A"
     for q in ["2160p","1080p","720p","480p"]:
