@@ -17,29 +17,41 @@ locks = {}
 
 def clean_title(raw):
 
+    # separators
     raw = raw.replace(".", " ").replace("_", " ").replace("-", " ")
 
-    # remove all brackets content
+    # remove @channel tags
+    raw = re.sub(r"@\w+", "", raw)
+
+    # remove brackets content
     raw = re.sub(r"\(.*?\)", "", raw)
     raw = re.sub(r"\[.*?\]", "", raw)
 
-    # remove site/channel words
-    raw = re.sub(r"\b(onlymoviiies|mzmoviiez|mzmoviies|moviiies|movieshub|filmyzilla|telegram|tme)\b","",raw,flags=re.I)
+    # remove site / channel names
+    raw = re.sub(r"\b(onlymoviiies|onlymovies|mzmoviiez|mzmoviies|moviiies|movieshub|filmyzilla|telegram|tme)\b","",raw,flags=re.I)
 
-    # remove quality / format
+    # detect year
+    year_match = re.search(r"\b(19|20)\d{2}\b", raw)
+    year = year_match.group(0) if year_match else ""
+
+    # remove year temporarily
+    raw = re.sub(r"\b(19|20)\d{2}\b","",raw)
+
+    # remove quality / codec / format
     raw = re.sub(r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd|hd)\b","",raw,flags=re.I)
 
     # remove audio / tags
     raw = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|\d+kbps|kbps|bps|uncut|south|movie|proper|extended|mk|esub)\b","",raw,flags=re.I)
-
-    # remove YEAR completely
-    raw = re.sub(r"\b(19|20)\d{2}\b", "", raw)
 
     # remove symbols
     raw = re.sub(r"[^a-zA-Z0-9 ]","",raw)
 
     # clean spaces
     raw = re.sub(r"\s+"," ",raw).strip()
+
+    # final format with year
+    if year:
+        raw = f"{raw} {year}"
 
     return raw.title()
 
