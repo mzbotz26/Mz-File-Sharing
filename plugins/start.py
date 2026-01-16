@@ -330,6 +330,51 @@ async def lb(client,q):
 
 # ================= COMMANDS =================
 
+@Bot.on_message(filters.command("genlink") & filters.user(ADMINS))
+async def genlink(client,m):
+    if not m.reply_to_message:
+        return await m.reply("Reply to a file.")
+
+    code = await encode(f"get-{m.reply_to_message.id*abs(client.db_channel.id)}")
+    await m.reply(f"https://t.me/{client.username}?start={code}")
+
+
+@Bot.on_message(filters.command("batch") & filters.user(ADMINS))
+async def batch(client,m):
+    try:
+        s=int(m.command[1]); e=int(m.command[2])
+    except:
+        return await m.reply("/batch start end")
+
+    code=await encode(f"get-{s*abs(client.db_channel.id)}-{e*abs(client.db_channel.id)}")
+    await m.reply(f"https://t.me/{client.username}?start={code}")
+
+
+@Bot.on_message(filters.command("users") & filters.user(ADMINS))
+async def users(client,m):
+    u=await full_userbase()
+    await m.reply(f"👥 Total Users: {len(u)}")
+
+
+@Bot.on_message(filters.command("broadcast") & filters.user(ADMINS))
+async def broadcast(client,m):
+    if not m.reply_to_message:
+        return await m.reply("Reply to a message to broadcast.")
+
+    users = await full_userbase()
+    sent = 0
+    fail = 0
+
+    for uid in users:
+        try:
+            await m.reply_to_message.copy(uid)
+            sent += 1
+            await asyncio.sleep(0.3)
+        except:
+            fail += 1
+
+    await m.reply(f"✅ Broadcast Done\n\n✔ Sent: {sent}\n❌ Failed: {fail}")
+
 @Bot.on_message(filters.command("forceverify") & filters.user(ADMINS), group=1)
 async def fv(client,m):
     if len(m.command)<2:
