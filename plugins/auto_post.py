@@ -19,7 +19,8 @@ def clean_title(raw):
     raw = raw.replace(".", " ").replace("_", " ").replace("-", " ")
     raw = re.sub(r"\(.*?\)", "", raw)
     raw = re.sub(r"\b(19|20)\d{2}\b", "", raw)
-
+    
+    raw = re.sub(r"\b(onlymoviiies|mzmoviiez|mzmoviies|moviiies|movieshub|filmyzilla|telegram|tme)\b","",raw,flags=re.I)
     raw = re.sub(r"\b(480p|720p|1080p|2160p|4k|x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdts|hdtc|cam|prehd|hd)\b","",raw,flags=re.I)
     raw = re.sub(r"\b(hindi|telugu|tamil|malayalam|marathi|dual|audio|dd|ddp|dd5|dd5\.1|aac|dts|\d+kbps|kbps|bps|uncut|south|movie|proper|extended|mk|esub)\b","",raw,flags=re.I)
 
