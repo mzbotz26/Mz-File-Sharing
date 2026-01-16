@@ -56,38 +56,36 @@ Enjoy premium access ❤️
 # ================= USER CAPTION =================
 
 def build_user_caption(msg, is_premium=False):
-    import re
-
     name = msg.document.file_name if msg.document else msg.video.file_name
 
     title = name.rsplit(".", 1)[0]
 
-    # remove @channel tags
+    # remove @tags
     title = re.sub(r"@\w+", "", title)
 
-    # remove channel/site names
-    title = re.sub(r"\b(onlymoviiies|mzmoviiez|mzmoviies|movieshub|filmyzilla|telegram|tme)\b", "", title, flags=re.I)
-
-    # replace separators
-    title = title.replace(".", " ").replace("_", " ").replace("-", " ")
-
-    # remove quality / format / language words
-    title = re.sub(r"\b(480p|720p|1080p|2160p|x264|x265|webdl|webrip|bluray|hdrip|marathi|hindi|english|telugu|tamil|malayalam|kannada)\b", "", title, flags=re.I)
+    # remove site / channel names
+    title = re.sub(r"\b(onlymovies|onlymoviiies|mzmoviiez|mzmoviies|movieshub|filmyzilla|telegram|tme)\b", "", title, flags=re.I)
 
     # extract year
     year_match = re.search(r"\b(19|20)\d{2}\b", title)
     year = year_match.group(0) if year_match else ""
 
-    # remove year from title
+    # remove year temporarily
     title = re.sub(r"\b(19|20)\d{2}\b", "", title)
 
-    # remove all brackets
+    # remove quality / format / language words
+    title = re.sub(r"\b(480p|720p|1080p|2160p|x264|x265|webdl|webrip|bluray|hdrip|marathi|hindi|english|telugu|tamil|malayalam|kannada)\b", "", title, flags=re.I)
+
+    # replace separators
+    title = title.replace(".", " ").replace("_", " ").replace("-", " ")
+
+    # remove brackets
     title = title.replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 
-    # remove extra spaces
+    # clean spaces
     title = re.sub(r"\s+", " ", title).strip()
 
-    # final title format
+    # attach year at end
     if year:
         title = f"{title} {year}"
 
@@ -100,7 +98,7 @@ def build_user_caption(msg, is_premium=False):
 
     # ---------------- AUDIO ----------------
     aud = []
-    for a in ["hindi", "english", "telugu", "tamil", "malayalam", "marathi", "kannada"]:
+    for a in ["hindi","english","telugu","tamil","malayalam","marathi","kannada"]:
         if a in name.lower():
             aud.append(a.capitalize())
     audio = " / ".join(aud) if aud else "Unknown"
