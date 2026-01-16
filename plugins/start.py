@@ -56,15 +56,23 @@ Enjoy premium access ❤️
 # ================= USER CAPTION =================
 
 def build_user_caption(msg, is_premium=False):
+    import re
+
     name = msg.document.file_name if msg.document else msg.video.file_name
 
-    title = name.rsplit(".",1)[0]
+    title = name.rsplit(".", 1)[0]
 
     # remove @channel tags
     title = re.sub(r"@\w+", "", title)
 
     # remove channel/site names
-    title = re.sub(r"\b(onlymoviiies|mzmoviiez|mzmoviies|movieshub|filmyzilla|telegram|tme)\b","",title,flags=re.I)
+    title = re.sub(r"\b(onlymoviiies|mzmoviiez|mzmoviies|movieshub|filmyzilla|telegram|tme)\b", "", title, flags=re.I)
+
+    # replace separators
+    title = title.replace(".", " ").replace("_", " ").replace("-", " ")
+
+    # remove quality / format / language words
+    title = re.sub(r"\b(480p|720p|1080p|2160p|x264|x265|webdl|webrip|bluray|hdrip|marathi|hindi|english|telugu|tamil|malayalam|kannada)\b", "", title, flags=re.I)
 
     # extract year
     year_match = re.search(r"\b(19|20)\d{2}\b", title)
@@ -73,34 +81,37 @@ def build_user_caption(msg, is_premium=False):
     # remove year from title
     title = re.sub(r"\b(19|20)\d{2}\b", "", title)
 
-    # remove quality / format / language words
-    title = re.sub(r"\b(480p|720p|1080p|2160p|x264|x265|webdl|webrip|bluray|hdrip|marathi|hindi|english|telugu|tamil|malayalam|kannada)\b","",title,flags=re.I)
+    # remove all brackets
+    title = title.replace("(", "").replace(")", "").replace("[", "").replace("]", "")
 
-    # replace separators
-    title = title.replace(".", " ").replace("_", " ").replace("-", " ")
-
-    # remove multiple spaces
+    # remove extra spaces
     title = re.sub(r"\s+", " ", title).strip()
 
-    # final title with year
+    # final title format
     if year:
-        title = f"{title} ({year})"
+        title = f"{title} {year}"
 
-    quality="N/A"
-    for q in ["2160p","1080p","720p","480p"]:
+    # ---------------- QUALITY ----------------
+    quality = "N/A"
+    for q in ["2160p", "1080p", "720p", "480p"]:
         if q.lower() in name.lower():
-            quality=q; break
+            quality = q
+            break
 
-    aud=[]
-    for a in ["hindi","english","telugu","tamil","malayalam","marathi","kannada"]:
-        if a in name.lower(): aud.append(a.capitalize())
-    audio=" / ".join(aud) if aud else "Unknown"
+    # ---------------- AUDIO ----------------
+    aud = []
+    for a in ["hindi", "english", "telugu", "tamil", "malayalam", "marathi", "kannada"]:
+        if a in name.lower():
+            aud.append(a.capitalize())
+    audio = " / ".join(aud) if aud else "Unknown"
 
-    se=""
-    m=re.search(r"s(\d+)e(\d+)",name,re.I)
-    if m: se=f"\n📺 Season {int(m.group(1))} Episode {int(m.group(2))}"
+    # ---------------- SEASON / EP ----------------
+    se = ""
+    m = re.search(r"s(\d+)e(\d+)", name, re.I)
+    if m:
+        se = f"\n📺 Season {int(m.group(1))} Episode {int(m.group(2))}"
 
-    caption=f"""🎬 {title}
+    caption = f"""🎬 {title}
 
 🎞 Quality : {quality}
 🔊 Audio : {audio}{se}
