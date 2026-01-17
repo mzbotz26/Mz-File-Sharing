@@ -374,12 +374,12 @@ async def send_verify(client,message,uid):
 
 # ================= CALLBACK =================
 
-@Bot.on_callback_query(filters.regex("^home$"), group=0)
+@Bot.on_callback_query(filters.regex("^home$"), group=1)
 async def home_back(client, q):
     await q.answer("Home")
     await send_home(client, q)
 
-@Bot.on_callback_query(filters.regex("^premium$"), group=1)
+@Bot.on_callback_query(filters.regex("^premium$"), group=2)
 async def prem(client,q):
     await q.answer()
     await q.message.edit(
@@ -390,7 +390,7 @@ async def prem(client,q):
         ])
     )
 
-@Bot.on_callback_query(filters.regex("^refinfo$"), group=1)
+@Bot.on_callback_query(filters.regex("^refinfo$"), group=2)
 async def ref(client,q):
     await q.answer()
     await q.message.edit(
@@ -400,7 +400,7 @@ async def ref(client,q):
         ])
     )
 
-@Bot.on_callback_query(filters.regex("^mypremium$"), group=1)
+@Bot.on_callback_query(filters.regex("^mypremium$"), group=2)
 async def myp(client, q):
     await q.answer()
 
@@ -424,7 +424,7 @@ async def myp(client, q):
         ])
     )
 
-@Bot.on_callback_query(filters.regex("^leaderboard$"), group=1)
+@Bot.on_callback_query(filters.regex("^leaderboard$"), group=2)
 async def lb(client,q):
     await q.answer()
     await q.message.edit(
