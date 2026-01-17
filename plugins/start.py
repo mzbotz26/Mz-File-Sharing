@@ -215,7 +215,7 @@ async def send_home(client, message):
         [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
     ])
 
-    await message.edit(text,reply_markup=btn)
+    await message.edit_text(text,reply_markup=btn)
 
 # ================= START =================
 
