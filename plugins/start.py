@@ -1,9 +1,8 @@
 # © MzBotz Premium File Store Bot
 
 import asyncio, time, random, string, re
-from pyrogram.types import InputMediaPhoto
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
 from pyrogram.enums import ParseMode
 from pyrogram.errors import FloodWait
 
@@ -374,10 +373,6 @@ async def send_verify(client,message,uid):
     )
 
 # ================= CALLBACK =================
-
-@Bot.on_callback_query(group=-1)
-async def debug(client,q):
-    print("CALLBACK:", q.data)
 
 @Bot.on_callback_query(filters.regex("^home$"), group=0)
 async def home_back(client, q):
