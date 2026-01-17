@@ -57,7 +57,7 @@ Enjoy premium access ❤️
 # ================= START TEXT BUILDER =================
 
 def build_start_text(message, verify, premium, ref_link):
-    return f"""👋 {message.mention}
+    return f"""👋 {message.from.user.mention}
 
 🤖 Welcome to Premium File Store Bot!
 
