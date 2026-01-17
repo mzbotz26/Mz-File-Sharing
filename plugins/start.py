@@ -1,6 +1,7 @@
 # © MzBotz Premium File Store Bot
 
 import asyncio, time, random, string, re
+from pyrogram.types import InputMediaPhoto
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
@@ -215,8 +216,10 @@ async def send_home(client, message):
         [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
     ])
 
-    await message.edit_text(text,reply_markup=btn)
-
+    await message.edit_media(
+        InputMediaPhoto(media=START_PIC, caption=text),
+        reply_markup=btn
+    )
 # ================= START =================
 
 @Bot.on_message(filters.command("start") & filters.private & subscribed)
