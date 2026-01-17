@@ -178,9 +178,9 @@ async def handle_referral(client, uid, ref_id):
 
 # ================= HOME UI FUNCTION =================
 
-async def send_home(client, q):
+async def send_home(client, message):
 
-    uid = q.from_user.id
+    uid = message.from_user.id
     verify = await get_verify_status(uid)
     premium = await get_premium(uid)
 
@@ -216,12 +216,12 @@ async def send_home(client, q):
     ])
 
     try:
-        await q.message.edit_media(
+        await message.edit_media(
             InputMediaPhoto(media=START_PIC, caption=text),
             reply_markup=btn
         )
     except:
-        await q.message.edit_text(text, reply_markup=btn)
+        await message.edit_text(text, reply_markup=btn)
 
 # ================= START =================
 
@@ -377,7 +377,7 @@ async def send_verify(client,message,uid):
 @Bot.on_callback_query(filters.regex("^home$"), group=1)
 async def home_back(client, q):
     await q.answer("Home")
-    await send_home(client, q)
+    await send_home(client, q.message)
 
 @Bot.on_callback_query(filters.regex("^premium$"), group=2)
 async def prem(client,q):
