@@ -176,10 +176,11 @@ async def handle_referral(client, uid, ref_id):
         await update_verify_status(ref_id, referrals=0)
         await client.send_message(ref_id, REFERRAL_REWARD_TEXT)
 
+# ================= HOME UI FUNCTION =================
+
 async def send_home(client, message):
 
     uid = message.from_user.id
-
     verify = await get_verify_status(uid)
     premium = await get_premium(uid)
 
@@ -214,7 +215,7 @@ async def send_home(client, message):
         [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
     ])
 
-    await message.edit_caption(caption=text, reply_markup=btn)
+    await message.edit(text,reply_markup=btn)
 
 # ================= START =================
 
