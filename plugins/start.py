@@ -181,7 +181,7 @@ async def handle_referral(client, uid, ref_id):
 
 async def send_home(client, message):
 
-    uid = message.from_user.id
+    uid = user.id
     verify = await get_verify_status(uid)
     premium = await get_premium(uid)
 
