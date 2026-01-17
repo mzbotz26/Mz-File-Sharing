@@ -176,6 +176,46 @@ async def handle_referral(client, uid, ref_id):
         await update_verify_status(ref_id, referrals=0)
         await client.send_message(ref_id, REFERRAL_REWARD_TEXT)
 
+async def send_home(client, message):
+
+    uid = message.from_user.id
+
+    verify = await get_verify_status(uid)
+    premium = await get_premium(uid)
+
+    ref_link=f"https://t.me/{client.username}?start=ref_{uid}"
+
+    text=f"""👋 {message.from_user.mention}
+
+🤖 Welcome to Premium File Store Bot!
+
+📂 Secure Private File Storage
+🔗 Auto Generated Access Links
+🔐 2-Step Verification Protection
+👑 Premium Users = No Verification
+🎁 Referral Rewards Available
+
+━━━━━━━━━━━━━━
+🔐 Verify : {"✅" if verify["is_verified"] else "❌"}
+👑 Premium : {"✅" if premium and premium.get("is_premium") else "❌"}
+👥 Referrals : {verify.get("referrals",0)}/5
+━━━━━━━━━━━━━━
+
+🎁 Invite friends:
+{ref_link}
+
+💪 Powered By : @MzMoviiez
+"""
+
+    btn=InlineKeyboardMarkup([
+        [InlineKeyboardButton("👑 Premium",callback_data="premium")],
+        [InlineKeyboardButton("🎁 Referral Info",callback_data="refinfo")],
+        [InlineKeyboardButton("📊 My Premium",callback_data="mypremium")],
+        [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
+    ])
+
+    await message.edit_caption(caption=text, reply_markup=btn)
+
 # ================= START =================
 
 @Bot.on_message(filters.command("start") & filters.private & subscribed)
