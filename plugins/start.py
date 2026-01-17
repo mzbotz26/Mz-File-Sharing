@@ -368,7 +368,7 @@ async def send_verify(client,message,uid):
 
 # ================= CALLBACK =================
 
-@Bot.on_callback_query(filters.regex("^home$"), group=1)
+@Bot.on_callback_query(filters.regex("^home$"), group=0)
 async def home_back(client,q):
     await q.answer()
     await start_command(client, q.message)
