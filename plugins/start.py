@@ -376,10 +376,10 @@ async def send_verify(client,message,uid):
 # ================= CALLBACK =================
 
 @Bot.on_callback_query()
-async def debug_all(client, q):
+async def debug(client,q):
     print("CALLBACK:", q.data)
 
-@Bot.on_callback_query(filters.data == "home", group=0)
+@Bot.on_callback_query(filters.regex("^home$"), group=0)
 async def home_back(client, q):
     await q.answer("Home")
     await send_home(client, q.message)
