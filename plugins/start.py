@@ -323,35 +323,55 @@ async def send_verify(client,message,uid):
 
 # ================= CALLBACK =================
 
+@Bot.on_callback_query(filters.regex("^home$"), group=1)
+async def home_back(client,q):
+    await q.answer()
+    await start_command(client, q.message)
+
 @Bot.on_callback_query(filters.regex("^premium$"), group=1)
 async def prem(client,q):
     await q.answer()
     await q.message.edit(
-        "👑 Premium Plans\n\n7 Days ₹10\n30 Days ₹30\n\nSend payment screenshot to Owner.",
+        "👑 Premium Plans\n\n7 Days ₹10\n30 Days ₹30",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("📩 Contact Owner",url=f"https://t.me/{OWNER_USERNAME}")]
+            [InlineKeyboardButton("📩 Contact Owner",url=f"https://t.me/{OWNER_USERNAME}")],
+            [InlineKeyboardButton("🔙 Back",callback_data="home")]
         ])
     )
 
 @Bot.on_callback_query(filters.regex("^refinfo$"), group=1)
 async def ref(client,q):
     await q.answer()
-    await q.message.edit("🎁 Invite 5 users → Get 30 Days Premium Free")
+    await q.message.edit(
+        "🎁 Invite 5 users → Get 30 Days Premium Free",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔙 Back",callback_data="home")]
+        ])
+    )
 
 @Bot.on_callback_query(filters.regex("^mypremium$"), group=1)
 async def myp(client,q):
     await q.answer()
-    uid=q.from_user.id
-    p=await get_premium(uid)
+    p=await get_premium(q.from_user.id)
     if not p:
         return await q.message.edit("❌ You are not premium.")
     left=int((p["expire_time"]-time.time())/3600)
-    await q.message.edit(f"👑 Premium Active\n⏳ Left: {left} Hours")
+    await q.message.edit(
+        f"👑 Premium Active\n⏳ Left: {left} Hours",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔙 Back",callback_data="home")]
+        ])
+    )
 
 @Bot.on_callback_query(filters.regex("^leaderboard$"), group=1)
 async def lb(client,q):
     await q.answer()
-    await q.message.edit("🏆 Referral Leaderboard coming soon.")
+    await q.message.edit(
+        "🏆 Referral Leaderboard coming soon.",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("🔙 Back",callback_data="home")]
+        ])
+    )
 
 # ================= COMMANDS =================
 
