@@ -406,16 +406,26 @@ async def ref(client,q):
     )
 
 @Bot.on_callback_query(filters.regex("^mypremium$"), group=1)
-async def myp(client,q):
+async def myp(client, q):
     await q.answer()
-    p=await get_premium(q.from_user.id)
+
+    uid = q.from_user.id
+    p = await get_premium(uid)
+
     if not p:
-        return await q.message.edit("❌ You are not premium.")
-    left=int((p["expire_time"]-time.time())/3600)
+        return await q.message.edit(
+            "❌ You are not premium.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("🔙 Back", callback_data="home")]
+            ])
+        )
+
+    left = int((p["expire_time"] - time.time()) / 3600)
+
     await q.message.edit(
         f"👑 Premium Active\n⏳ Left: {left} Hours",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔙 Back",callback_data="home")]
+            [InlineKeyboardButton("🔙 Back", callback_data="home")]
         ])
     )
 
