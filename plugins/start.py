@@ -181,7 +181,7 @@ async def handle_referral(client, uid, ref_id):
 
 async def send_home(client, message):
 
-    uid = user.id
+    uid = q.from_user.id
     verify = await get_verify_status(uid)
     premium = await get_premium(uid)
 
@@ -217,12 +217,12 @@ async def send_home(client, message):
     ])
 
     try:
-        await message.edit_media(
+        await q.message.edit_media(
             InputMediaPhoto(media=START_PIC, caption=text),
             reply_markup=btn
         )
     except:
-        await message.edit_text(text, reply_markup=btn)
+        await q.message.edit_text(text, reply_markup=btn)
 
 # ================= START =================
 
