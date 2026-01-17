@@ -293,7 +293,11 @@ async def start_command(client, message):
         [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
     ])
 
-    await message.reply(text,reply_markup=btn)
+    await message.reply_photo(
+        START_PIC,
+        caption=text,
+        reply_markup=btn
+            )
 
 # ================= VERIFY =================
 
