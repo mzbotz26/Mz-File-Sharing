@@ -216,10 +216,14 @@ async def send_home(client, message):
         [InlineKeyboardButton("🏆 Leaderboard",callback_data="leaderboard")]
     ])
 
-    await message.edit_media(
-        InputMediaPhoto(media=START_PIC, caption=text),
-        reply_markup=btn
-    )
+    try:
+        await message.edit_media(
+            InputMediaPhoto(media=START_PIC, caption=text),
+            reply_markup=btn
+        )
+    except:
+        await message.edit_text(text, reply_markup=btn)
+
 # ================= START =================
 
 @Bot.on_message(filters.command("start") & filters.private & subscribed)
@@ -374,7 +378,7 @@ async def send_verify(client,message,uid):
 @Bot.on_callback_query(filters.regex("^home$"), group=0)
 async def home_back(client,q):
     await q.answer()
-    await start_command(client, q.message)
+    await send_home(client, q.message)
 
 @Bot.on_callback_query(filters.regex("^premium$"), group=1)
 async def prem(client,q):
