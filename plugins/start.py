@@ -179,7 +179,7 @@ async def handle_referral(client, uid, ref_id):
 
 # ================= HOME UI FUNCTION =================
 
-async def send_home(client, message):
+async def send_home(client, q):
 
     uid = q.from_user.id
     verify = await get_verify_status(uid)
@@ -375,14 +375,14 @@ async def send_verify(client,message,uid):
 
 # ================= CALLBACK =================
 
-@Bot.on_callback_query()
+@Bot.on_callback_query(group=-1)
 async def debug(client,q):
     print("CALLBACK:", q.data)
 
 @Bot.on_callback_query(filters.regex("^home$"), group=0)
 async def home_back(client, q):
     await q.answer("Home")
-    await send_home(client, q.message)
+    await send_home(client, q)
 
 @Bot.on_callback_query(filters.regex("^premium$"), group=1)
 async def prem(client,q):
