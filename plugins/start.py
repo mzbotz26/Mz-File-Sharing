@@ -267,7 +267,13 @@ async def start_command(client, message):
         if verify["verify_token"] != token:
             return await message.reply("❌ Invalid or expired verification link.")
         await update_verify_status(uid,is_verified=True,verified_time=time.time())
-        return await message.reply("✅ Verification successful!")
+        return await message.reply(
+    "🎉 Verification Successful!\n\n"
+    "✅ Ab aap next **12 hours** ke liye bot use kar sakte ho.\n\n"
+    "📂 Apna file link dobara click kijiye aur file paayiye.\n\n"
+    "⏳ 12 hours ke baad verification phir se karna hoga.\n\n"
+    "❤️ Thanks for supporting our bot!"
+    )
 
     if len(message.command)>1 and not message.command[1].startswith("ref_"):
 
