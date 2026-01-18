@@ -53,31 +53,6 @@ You earned 30 Days Premium from referrals 🎁
 Enjoy premium access ❤️
 """
 
-# ================= START TEXT BUILDER =================
-
-def build_start_text(message, verify, premium, ref_link):
-    return f"""👋 {message.from_user.mention}
-
-🤖 Welcome to Premium File Store Bot!
-
-📂 Secure Private File Storage
-🔗 Auto Generated Access Links
-🔐 2-Step Verification Protection
-👑 Premium Users = No Verification
-🎁 Referral Rewards Available
-
-━━━━━━━━━━━━━━
-🔐 Verify : {"✅" if verify["is_verified"] else "❌"}
-👑 Premium : {"✅" if premium and premium.get("is_premium") else "❌"}
-👥 Referrals : {verify.get("referrals",0)}/5
-━━━━━━━━━━━━━━
-
-🎁 Invite friends:
-{ref_link}
-
-💪 Powered By : @MzMoviiez
-"""
-
 # ================= USER CAPTION =================
 
 def build_user_caption(msg, is_premium=False):
