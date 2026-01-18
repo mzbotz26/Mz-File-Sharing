@@ -17,14 +17,11 @@ locks = {}
 
 def clean_title(raw):
 
-    # replace separators
     raw = raw.replace(".", " ").replace("_", " ").replace("-", " ")
 
-    # remove brackets content
     raw = re.sub(r"\(.*?\)", "", raw)
     raw = re.sub(r"\[.*?\]", "", raw)
 
-    # remove site / channel names
     raw = re.sub(
         r"\b(onlymovies|onlymoviiies|mzmoviiez|mzmoviies|telegram|tme|movieshub|filmyzilla)\b",
         "",
@@ -32,10 +29,8 @@ def clean_title(raw):
         flags=re.I
     )
 
-    # remove quality words
     raw = re.sub(r"\b(480p|720p|1080p|2160p|4k)\b", "", raw, flags=re.I)
 
-    # remove codecs / formats
     raw = re.sub(
         r"\b(x264|x265|hevc|hdrip|webdl|webrip|bluray|brrip|hdtc|hdts|cam)\b",
         "",
@@ -43,7 +38,6 @@ def clean_title(raw):
         flags=re.I
     )
 
-    # remove audio words
     raw = re.sub(
         r"\b(hindi|telugu|tamil|malayalam|marathi|english|dual|audio)\b",
         "",
@@ -51,20 +45,15 @@ def clean_title(raw):
         flags=re.I
     )
 
-    # remove year
     raw = re.sub(r"\b(19|20)\d{2}\b", "", raw)
 
-    # keep sequel numbers like Akhanda 2, KGF 2, Pushpa 2
-    raw = re.sub(r"\b(?!part\s)(?!\w+\s)\d{2,4}\b", "", raw, flags=re.I)
+    # keep sequel numbers like Akhanda 2, remove only long numbers
+    raw = re.sub(r"\b\d{3,4}\b", "", raw)
 
-    # remove symbols
     raw = re.sub(r"[^a-zA-Z0-9 ]", "", raw)
-
-    # clean spaces
     raw = re.sub(r"\s+", " ", raw).strip()
 
     return raw.title()
-
 def merge_key_title(title):
     return re.sub(r"[^a-z0-9]","",title.lower())
 
