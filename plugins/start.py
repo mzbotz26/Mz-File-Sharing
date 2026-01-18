@@ -223,6 +223,42 @@ async def send_home(client, message):
     except:
         await message.edit_text(text, reply_markup=btn)
 
+# ---------------- FORCE SUBSCRIBE ----------------
+
+@Bot.on_message(filters.command("start") & filters.private & ~subscribed)
+async def not_joined(client, message):
+
+    buttons = [
+        [
+            InlineKeyboardButton("Join Channel", url=client.invitelink),
+            InlineKeyboardButton("Join Channel", url=client.invitelink2),
+        ],
+        [
+            InlineKeyboardButton("Join Channel", url=client.invitelink3),
+        ]
+    ]
+
+    try:
+        buttons.append([
+            InlineKeyboardButton(
+                "Now Click Here",
+                url=f"https://t.me/{client.username}?start={message.command[1]}"
+            )
+        ])
+    except:
+        pass
+
+    await message.reply(
+        FORCE_MSG.format(
+            first=message.from_user.first_name,
+            last=message.from_user.last_name,
+            username=message.from_user.username,
+            mention=message.from_user.mention,
+            id=message.from_user.id
+        ),
+        reply_markup=InlineKeyboardMarkup(buttons)
+                                    )
+
 # ================= START =================
 
 @Bot.on_message(filters.command("start") & filters.private & subscribed)
